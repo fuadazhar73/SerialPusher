@@ -309,7 +309,7 @@ public class UploadManagement {
       nameValuePairs.add(new BasicNameValuePair("unit-id", sdu.getUnitId()));
       nameValuePairs.add(new BasicNameValuePair("cal-num", sdu.getCalNum()));
       nameValuePairs.add(new BasicNameValuePair("shift-net", sdu.getShiftNet()));
-      nameValuePairs.add(new BasicNameValuePair("shift-gross", sdu.getShiftNet()));
+      nameValuePairs.add(new BasicNameValuePair("shift-gross", sdu.getShiftGross()));
       nameValuePairs.add(new BasicNameValuePair("end-net-total", sdu.getEndNetTotal()));
       nameValuePairs.add(new BasicNameValuePair("end-totalizer", sdu.getEndTotalizer()));
       nameValuePairs.add(new BasicNameValuePair("deliveries", sdu.getDeliveries()));
