@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import model.SerialCalibrationQueued;
 import model.SerialData;
 import model.SerialDataQueue;
-import model.SerialDataUploaded;
 import serialuploader.SerialUploader;
 import util.DbConnection;
 import util.Strings;
@@ -212,12 +211,14 @@ public class QueueManagement {
       insertQueue.setString(1, serialData.getShiftStart());
       insertQueue.setString(2, serialData.getShiftFinish());
       insertQueue.setString(3, serialData.getUnitId());
-      insertQueue.setString(4, serialData.getCalNum());
-      insertQueue.setString(5, serialData.getShiftNet());
-      insertQueue.setString(6, serialData.getShiftGross());
-      insertQueue.setString(7, serialData.getEndNetTotal());
-      insertQueue.setString(8, serialData.getEndTotalizer());
-      insertQueue.setString(9, serialData.getDeliveries());  
+      insertQueue.setString(4, serialData.getSaleNumber());
+      insertQueue.setString(5, serialData.getMeterNumber());
+      insertQueue.setString(6, serialData.getCalNum());
+      insertQueue.setString(7, serialData.getShiftNet());
+      insertQueue.setString(8, serialData.getShiftGross());
+      insertQueue.setString(9, serialData.getEndNetTotal());
+      insertQueue.setString(10, serialData.getEndTotalizer());
+      insertQueue.setString(11, serialData.getDeliveries());  
       insertQueue.executeUpdate();
 
     } catch (SQLException | NumberFormatException e) {
@@ -247,12 +248,14 @@ public class QueueManagement {
         sdq.setShiftStart(rs.getString(3));
         sdq.setShiftFinish(rs.getString(4));
         sdq.setUnitId(rs.getString(5));
-        sdq.setCalNum(rs.getString(6));
-        sdq.setShiftNet(rs.getString(7));
-        sdq.setShiftGross(rs.getString(8));
-        sdq.setEndNetTotal(rs.getString(9));
-        sdq.setEndTotalizer(rs.getString(10));
-        sdq.setDeliveries(rs.getString(11));
+        sdq.setSaleNumber(rs.getString(6));
+        sdq.setMeterNumber(rs.getString(7));
+        sdq.setCalNum(rs.getString(8));
+        sdq.setShiftNet(rs.getString(9));
+        sdq.setShiftGross(rs.getString(10));
+        sdq.setEndNetTotal(rs.getString(11));
+        sdq.setEndTotalizer(rs.getString(12));
+        sdq.setDeliveries(rs.getString(13));
         listData.add(sdq);
         if (listData.isEmpty() == false) {
           calibQueueData(listData);
@@ -291,12 +294,14 @@ public class QueueManagement {
         insertUpload.setString(1, sdq.getShiftStart());
         insertUpload.setString(2, sdq.getShiftFinish());
         insertUpload.setString(3, sdq.getUnitId());
-        insertUpload.setString(4, sdq.getCalNum());
-        insertUpload.setString(5, sdq.getShiftNet());
-        insertUpload.setString(6, sdq.getShiftGross());
-        insertUpload.setString(7, sdq.getEndNetTotal());
-        insertUpload.setString(8, sdq.getEndTotalizer());
-        insertUpload.setString(9, sdq.getDeliveries());
+        insertUpload.setString(4, sdq.getSaleNumber());
+        insertUpload.setString(5, sdq.getMeterNumber());
+        insertUpload.setString(6, sdq.getCalNum());
+        insertUpload.setString(7, sdq.getShiftNet());
+        insertUpload.setString(8, sdq.getShiftGross());
+        insertUpload.setString(9, sdq.getEndNetTotal());
+        insertUpload.setString(10, sdq.getEndTotalizer());
+        insertUpload.setString(11, sdq.getDeliveries());
 
         FlagManagement fm = new FlagManagement();
         fm.flagCalibQueued(id);

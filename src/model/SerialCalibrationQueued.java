@@ -5,25 +5,24 @@
  */
 package model;
 
-
 /**
  *
  * @author bachtiar
  */
+public class SerialCalibrationQueued {
 
-public class SerialCalibrationQueued   {
-
- 
-  private Integer id;  
-  private String uploaded;  
-  private String shiftStart;  
-  private String shiftFinish; 
-  private String unitId;  
+  private Integer id;
+  private String uploaded;
+  private String shiftStart;
+  private String shiftFinish;
+  private String unitId;
+  private String saleNumber;
+  private String meterNumber;
   private String calNum;
-  private String shiftNet;  
-  private String shiftGross;  
-  private String endNetTotal; 
-  private String endTotalizer;  
+  private String shiftNet;
+  private String shiftGross;
+  private String endNetTotal;
+  private String endTotalizer;
   private String deliveries;
 
   public SerialCalibrationQueued() {
@@ -33,12 +32,14 @@ public class SerialCalibrationQueued   {
     this.id = id;
   }
 
-  public SerialCalibrationQueued(Integer id, String uploaded, String shiftStart, String shiftFinish, String unitId, String calNum, String shiftNet, String shiftGross, String endNetTotal, String endTotalizer, String deliveries) {
+  public SerialCalibrationQueued(String saleNumber, String meterNumber, Integer id, String uploaded, String shiftStart, String shiftFinish, String unitId, String calNum, String shiftNet, String shiftGross, String endNetTotal, String endTotalizer, String deliveries) {
     this.id = id;
     this.uploaded = uploaded;
     this.shiftStart = shiftStart;
     this.shiftFinish = shiftFinish;
     this.unitId = unitId;
+    this.saleNumber = saleNumber;
+    this.meterNumber = meterNumber;
     this.calNum = calNum;
     this.shiftNet = shiftNet;
     this.shiftGross = shiftGross;
@@ -87,6 +88,23 @@ public class SerialCalibrationQueued   {
     this.unitId = unitId;
   }
 
+
+  public String getSaleNumber() {
+    return saleNumber;
+  }
+
+  public void setSaleNumber(String saleNumber) {
+    this.saleNumber = saleNumber;
+  }
+
+  public String getMeterNumber() {
+    return meterNumber;
+  }
+
+  public void setMeterNumber(String meterNumber) {
+    this.meterNumber = meterNumber;
+  }
+
   public String getCalNum() {
     return calNum;
   }
@@ -133,5 +151,5 @@ public class SerialCalibrationQueued   {
 
   public void setDeliveries(String deliveries) {
     this.deliveries = deliveries;
-  }  
+  }
 }

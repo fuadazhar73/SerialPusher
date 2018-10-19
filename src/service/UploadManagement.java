@@ -21,7 +21,6 @@ import java.util.regex.PatternSyntaxException;
 import model.SerialCalibrationQueued;
 import model.SerialCalibrationUploaded;
 import model.SerialData;
-import model.SerialDataQueue;
 import model.SerialDataUploaded;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -56,6 +55,7 @@ public class UploadManagement {
 
         Long id = rs.getLong("ID");
         SerialDataUploaded serialData = new SerialDataUploaded();
+        
         serialData.setIDstart(rs.getLong("ID_start"));
         serialData.setIDend(rs.getLong("ID_end"));
         serialData.setTicketNo(rs.getString("ticket_no"));
@@ -98,7 +98,7 @@ public class UploadManagement {
 
     try {
       List<NameValuePair> nameValuePairs = new ArrayList<>(1);
-      nameValuePairs.add(new BasicNameValuePair("site-id", sdu.getSiteId()));
+      nameValuePairs.add(new BasicNameValuePair("site-id", Strings.SITE_ID));
       nameValuePairs.add(new BasicNameValuePair("start-id", sdu.getIDstart().toString()));
       nameValuePairs.add(new BasicNameValuePair("end-id", sdu.getIDend().toString()));
       nameValuePairs.add(new BasicNameValuePair("ticket-no", sdu.getTicketNo()));
@@ -128,11 +128,11 @@ public class UploadManagement {
       HttpResponse response = client.execute(post);
       try (BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
         while ((line = rd.readLine()) != null) {
-          System.out.println("Send:" + line);
+          System.out.println(line);
           sb.append(line);
         }
         int a = response.getStatusLine().getStatusCode();
-        System.out.println("Connection Status --> " + a + " OK");
+        System.out.println("--> " + a + " OK");
         post.releaseConnection();
       }
       client.close();
@@ -140,11 +140,12 @@ public class UploadManagement {
     } catch (IOException | PatternSyntaxException e) {
       System.out.println(Strings.INFO_NO_INTERNET);
     } finally {
-      if (sb.toString().trim().equalsIgnoreCase("SUCCESS")) {
+      if (sb.toString().trim().equalsIgnoreCase("SERIAL SUCCESS")) {
+        System.out.println("Gross Delivered");
         FM.flagUploaded(id);
       }
-      if (sb.toString().trim().equalsIgnoreCase("FAILED")) {
-        System.out.println("but sumething wrong on server side !!");
+      if (sb.toString().trim().equalsIgnoreCase("SERIAL FAILED")) {
+        System.out.println("Some errors on server side !! ");
       }
     }
   }
@@ -231,12 +232,14 @@ public class UploadManagement {
         serialData.setShiftStart(rs.getString(3));
         serialData.setShiftFinish(rs.getString(4));
         serialData.setUnitId(rs.getString(5));
-        serialData.setCalNum(rs.getString("cal_num"));
-        serialData.setShiftNet(rs.getString("shift_net"));
-        serialData.setShiftGross(rs.getString("shift_gross"));
-        serialData.setEndNetTotal(rs.getString("end_net_total"));
-        serialData.setEndTotalizer(rs.getString("end_totalizer"));
-        serialData.setDeliveries(rs.getString("deliveries"));
+        serialData.setSaleNumber(rs.getString(6));
+        serialData.setMeterNumber(rs.getString(7));
+        serialData.setCalNum(rs.getString(8));
+        serialData.setShiftNet(rs.getString(9));
+        serialData.setShiftGross(rs.getString(10));
+        serialData.setEndNetTotal(rs.getString(11));
+        serialData.setEndTotalizer(rs.getString(12));
+        serialData.setDeliveries(rs.getString(13));
 
         sendCalbrationData(id, serialData);
       }
@@ -263,12 +266,14 @@ public class UploadManagement {
         sdq.setShiftStart(rs.getString(3));
         sdq.setShiftFinish(rs.getString(4));
         sdq.setUnitId(rs.getString(5));
-        sdq.setCalNum(rs.getString(6));
-        sdq.setShiftNet(rs.getString(7));
-        sdq.setShiftGross(rs.getString(8));
-        sdq.setEndNetTotal(rs.getString(9));
-        sdq.setEndTotalizer(rs.getString(10));
-        sdq.setDeliveries(rs.getString(11));
+        sdq.setSaleNumber(rs.getString(6));
+        sdq.setMeterNumber(rs.getString(7));
+        sdq.setCalNum(rs.getString(8));
+        sdq.setShiftNet(rs.getString(9));
+        sdq.setShiftGross(rs.getString(10));
+        sdq.setEndNetTotal(rs.getString(11));
+        sdq.setEndTotalizer(rs.getString(12));
+        sdq.setDeliveries(rs.getString(13));
         listData.add(sdq);
         if (listData.isEmpty() == false) {
 
@@ -307,6 +312,8 @@ public class UploadManagement {
       nameValuePairs.add(new BasicNameValuePair("shift-start", sdu.getShiftStart()));
       nameValuePairs.add(new BasicNameValuePair("shift-finish", sdu.getShiftFinish()));
       nameValuePairs.add(new BasicNameValuePair("unit-id", sdu.getUnitId()));
+      nameValuePairs.add(new BasicNameValuePair("sale-number", sdu.getSaleNumber()));
+      nameValuePairs.add(new BasicNameValuePair("meter-number", sdu.getMeterNumber()));
       nameValuePairs.add(new BasicNameValuePair("cal-num", sdu.getCalNum()));
       nameValuePairs.add(new BasicNameValuePair("shift-net", sdu.getShiftNet()));
       nameValuePairs.add(new BasicNameValuePair("shift-gross", sdu.getShiftGross()));
@@ -332,10 +339,11 @@ public class UploadManagement {
     } catch (IOException | PatternSyntaxException e) {
       System.out.println(Strings.INFO_NO_INTERNET);
     } finally {
-      if (sbx.toString().trim().equalsIgnoreCase("SUCCESS")) {
+      if (sbx.toString().trim().equalsIgnoreCase("CALIB SUCCESS")) {
+        System.out.println("End Totalizer Delivered");
         FM.flagCalibUploaded(id);
       }
-      if (sbx.toString().trim().equalsIgnoreCase("FAILED")) {
+      if (sbx.toString().trim().equalsIgnoreCase("CALIB FAILED")) {
         System.out.println("but sumething wrong on server side !!");
       }
     }
