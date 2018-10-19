@@ -43,13 +43,48 @@ public class QueueManagement {
       insertQueue.setLong(1, serialData.getStartId());
       insertQueue.setLong(2, serialData.getEndId());
       insertQueue.setString(3, serialData.getTicketNumber());
-      insertQueue.setString(4, serialData.getStart());
-      insertQueue.setString(5, serialData.getFinish());
-      insertQueue.setString(6, serialData.getStartCount());
+      if(serialData.getStart() == null || serialData.getStart() == "" )
+      {
+        insertQueue.setString(4, serialData.getFinish());
+      }
+      else
+      {
+       insertQueue.setString(4, serialData.getStart()); 
+      }
+      
+      if(serialData.getStart() == null || serialData.getStart() == "" )
+      {
+        insertQueue.setString(5, serialData.getStart()); 
+      }
+      else
+      {
+        insertQueue.setString(5, serialData.getFinish());
+      }
+      if (serialData.getStartCount() == null || serialData.getStartCount() == "")
+      {
+        insertQueue.setString(6, "0.0");
+      }
+      else
+      {
+        insertQueue.setString(6, serialData.getStartCount());
+      }      
       insertQueue.setString(7, serialData.getStartCountUom());
       insertQueue.setString(8, serialData.getEndCount());
-      insertQueue.setString(9, serialData.getEndCountUom());
-      insertQueue.setString(10, serialData.getGrossDeliver());
+      if (serialData.getEndCountUom() == null || serialData.getEndCountUom() == ""){
+        insertQueue.setString(9, serialData.getGrossDeliver());
+      }
+      else
+      {
+       insertQueue.setString(9, serialData.getEndCountUom()); 
+      }      
+      if (serialData.getGrossDeliver() == null || serialData.getGrossDeliver() == "" )
+      {
+        insertQueue.setString(10, serialData.getEndCount());
+      }
+      else
+      {
+        insertQueue.setString(10, serialData.getGrossDeliver());
+      }
       insertQueue.setString(11, serialData.getGrossDeliverUom());
       insertQueue.setString(12, serialData.getAvgFlowRate());
       insertQueue.setString(13, serialData.getAvgFlowRateUom());
