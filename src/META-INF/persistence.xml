@@ -4,6 +4,9 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>model.SerialDataQueue</class>
     <class>model.SerialDataUploaded</class>
+    <class>model.SerialCalibration</class>
+    <class>model.SerialCalibrationQueued</class>
+    <class>model.SerialCalibrationUploaded</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/rmttys?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

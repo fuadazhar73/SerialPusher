@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.PatternSyntaxException;
+import model.SerialCalibrationQueued;
+import model.SerialCalibrationUploaded;
+import model.SerialData;
 import model.SerialDataQueue;
 import model.SerialDataUploaded;
 import org.apache.http.HttpResponse;
@@ -36,15 +39,15 @@ import util.Strings;
  * @author bachtiar
  */
 public class UploadManagement {
-  
+
   FlagManagement FM = new FlagManagement();
 
-  private void startUpload() {
+  private void serialDataUpload() {
     Connection conn = null;
     try {
       conn = DriverManager.getConnection(DbConnection.MYSQL_URL, DbConnection.MYSQL_UNAME, DbConnection.MYSQL_PASSWORD);
 
-      String query = QueryManagement.SELECT_TABLE_TO_UPLOAD; 
+      String query = QueryManagement.SELECT_TABLE_TO_UPLOAD;
 
       Statement stmt = conn.createStatement();
       ResultSet rs = stmt.executeQuery(query);
@@ -90,13 +93,12 @@ public class UploadManagement {
 
     String line = "";
     StringBuilder sb = new StringBuilder();
-    CloseableHttpClient client = HttpClients.createDefault();    
-    HttpPost post = new HttpPost(Strings.POST_CLOUD);
+    CloseableHttpClient client = HttpClients.createDefault();
+    HttpPost post = new HttpPost(Strings.POST_LOCAL);
 
     try {
-
       List<NameValuePair> nameValuePairs = new ArrayList<>(1);
-      nameValuePairs.add(new BasicNameValuePair("site-id", Strings.SITE_ID));
+      nameValuePairs.add(new BasicNameValuePair("site-id", sdu.getSiteId()));
       nameValuePairs.add(new BasicNameValuePair("start-id", sdu.getIDstart().toString()));
       nameValuePairs.add(new BasicNameValuePair("end-id", sdu.getIDend().toString()));
       nameValuePairs.add(new BasicNameValuePair("ticket-no", sdu.getTicketNo()));
@@ -126,12 +128,11 @@ public class UploadManagement {
       HttpResponse response = client.execute(post);
       try (BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
         while ((line = rd.readLine()) != null) {
-          System.out.println(line);
+          System.out.println("Send:" + line);
           sb.append(line);
         }
-
         int a = response.getStatusLine().getStatusCode();
-        System.out.println("--> " + a);
+        System.out.println("Connection Status --> " + a + " OK");
         post.releaseConnection();
       }
       client.close();
@@ -142,9 +143,12 @@ public class UploadManagement {
       if (sb.toString().trim().equalsIgnoreCase("SUCCESS")) {
         FM.flagUploaded(id);
       }
+      if (sb.toString().trim().equalsIgnoreCase("FAILED")) {
+        System.out.println("but sumething wrong on server side !!");
+      }
     }
   }
-  
+
   public List<SerialDataUploaded> checkPendingUpload() {
     List<SerialDataUploaded> listData = new ArrayList<>();
     String queueResults = QueryManagement.SELECT_ALL_SERIAL_DATA_UPLOADED;
@@ -185,7 +189,7 @@ public class UploadManagement {
         listData.add(sdr);
         if (listData.isEmpty() == false) {
 
-          startUpload();
+          serialDataUpload();
           return listData;
 
         } else {
@@ -205,6 +209,136 @@ public class UploadManagement {
       }
     }
     return listData;
+  }
+
+  private void calibrationDataUpload() {
+    Connection conn = null;
+    try {
+      conn = DriverManager.getConnection(DbConnection.MYSQL_URL, DbConnection.MYSQL_UNAME, DbConnection.MYSQL_PASSWORD);
+
+      String query = QueryManagement.SELECT_UPLOAD_CALIBRATION;
+
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(query);
+
+      while (rs.next()) {
+        SerialCalibrationUploaded serialData = new SerialCalibrationUploaded();
+
+        int id = rs.getInt("id");
+
+        //serialData.setId(rs.getInt("id"));
+        serialData.setUploaded(rs.getString(2));
+        serialData.setShiftStart(rs.getString(3));
+        serialData.setShiftFinish(rs.getString(4));
+        serialData.setUnitId(rs.getString(5));
+        serialData.setCalNum(rs.getString("cal_num"));
+        serialData.setShiftNet(rs.getString("shift_net"));
+        serialData.setShiftGross(rs.getString("shift_gross"));
+        serialData.setEndNetTotal(rs.getString("end_net_total"));
+        serialData.setEndTotalizer(rs.getString("end_totalizer"));
+        serialData.setDeliveries(rs.getString("deliveries"));
+
+        sendCalbrationData(id, serialData);
+      }
+      conn.close();
+
+    } catch (SQLException ex) {
+      Logger.getLogger(SerialUploader.class.getName()).log(Level.SEVERE, null, ex);
+    }
+  }
+
+  public List<SerialCalibrationQueued> checkPendingCalib() {
+    List<SerialCalibrationQueued> listData = new ArrayList<>();
+    String queueResults = QueryManagement.SELECT_UPLOAD_CALIBRATION;
+    Connection conn = null;
+    try {
+      conn = DriverManager.getConnection(DbConnection.MYSQL_URL, DbConnection.MYSQL_UNAME, DbConnection.MYSQL_PASSWORD);
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(queueResults);
+      while (rs.next()) {
+        SerialCalibrationQueued sdq = new SerialCalibrationQueued();
+
+        sdq.setId(rs.getInt(1));
+        sdq.setUploaded(rs.getString(2));
+        sdq.setShiftStart(rs.getString(3));
+        sdq.setShiftFinish(rs.getString(4));
+        sdq.setUnitId(rs.getString(5));
+        sdq.setCalNum(rs.getString(6));
+        sdq.setShiftNet(rs.getString(7));
+        sdq.setShiftGross(rs.getString(8));
+        sdq.setEndNetTotal(rs.getString(9));
+        sdq.setEndTotalizer(rs.getString(10));
+        sdq.setDeliveries(rs.getString(11));
+        listData.add(sdq);
+        if (listData.isEmpty() == false) {
+
+          calibrationDataUpload();
+          return listData;
+
+        } else {
+          return listData;
+        }
+
+      }
+    } catch (SQLException e) {
+      System.out.println(e);
+    } finally {
+      try {
+        conn.close();
+
+      } catch (SQLException ex) {
+        Logger.getLogger(SerialUploader.class
+                .getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+    return listData;
+  }
+
+  private void sendCalbrationData(int id, SerialCalibrationUploaded sdu) {
+
+    String linex = "";
+    StringBuilder sbx = new StringBuilder();
+    CloseableHttpClient clientx = HttpClients.createDefault();
+    HttpPost postx = new HttpPost(Strings.POST_CALIB_LOCAL);
+
+    try {
+      List<NameValuePair> nameValuePairs = new ArrayList<>(1);
+      nameValuePairs.add(new BasicNameValuePair("uploaded", sdu.getUploaded()));
+      nameValuePairs.add(new BasicNameValuePair("shift-start", sdu.getShiftStart()));
+      nameValuePairs.add(new BasicNameValuePair("shift-finish", sdu.getShiftFinish()));
+      nameValuePairs.add(new BasicNameValuePair("unit-id", sdu.getUnitId()));
+      nameValuePairs.add(new BasicNameValuePair("cal-num", sdu.getCalNum()));
+      nameValuePairs.add(new BasicNameValuePair("shift-net", sdu.getShiftNet()));
+      nameValuePairs.add(new BasicNameValuePair("shift-gross", sdu.getShiftNet()));
+      nameValuePairs.add(new BasicNameValuePair("end-net-total", sdu.getEndNetTotal()));
+      nameValuePairs.add(new BasicNameValuePair("end-totalizer", sdu.getEndTotalizer()));
+      nameValuePairs.add(new BasicNameValuePair("deliveries", sdu.getDeliveries()));
+      SerialData serialData = new SerialData();
+      nameValuePairs.add(new BasicNameValuePair("data-state", serialData.getDataState()));
+
+      postx.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+      HttpResponse responsex = clientx.execute(postx);
+      try (BufferedReader rdx = new BufferedReader(new InputStreamReader(responsex.getEntity().getContent()))) {
+        while ((linex = rdx.readLine()) != null) {
+          System.out.println(linex);
+          sbx.append(linex);
+        }
+        int a = responsex.getStatusLine().getStatusCode();
+        System.out.println("--> " + a + " OK");
+        postx.releaseConnection();
+      }
+      clientx.close();
+
+    } catch (IOException | PatternSyntaxException e) {
+      System.out.println(Strings.INFO_NO_INTERNET);
+    } finally {
+      if (sbx.toString().trim().equalsIgnoreCase("SUCCESS")) {
+        FM.flagCalibUploaded(id);
+      }
+      if (sbx.toString().trim().equalsIgnoreCase("FAILED")) {
+        System.out.println("but sumething wrong on server side !!");
+      }
+    }
   }
 
 }

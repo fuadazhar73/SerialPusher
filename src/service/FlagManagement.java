@@ -99,5 +99,54 @@ public class FlagManagement {
       }
     }
   }
+  public void flagCalibQueued(Long id) {
+    String insertSerialUploadQuery = QueryManagement.FLAG_SERIAL_CALIBRATION_QUEUED;
+    Connection conn = null;
+
+    try {
+
+      conn = DriverManager.getConnection(DbConnection.MYSQL_URL, DbConnection.MYSQL_UNAME, DbConnection.MYSQL_PASSWORD);
+      PreparedStatement insertUpload = conn.prepareStatement(insertSerialUploadQuery);
+      insertUpload.setLong(1, id);
+      insertUpload.executeUpdate();
+      System.out.println(Strings.FLAG_QUEUED);
+
+    } catch (SQLException | NumberFormatException e) {
+      System.out.println(e);
+    } finally {
+      try {
+        conn.close();
+
+      } catch (SQLException ex) {
+        Logger.getLogger(SerialUploader.class
+                .getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
+    void flagCalibUploaded(int id) {
+    String insertSerialUploadQuery = QueryManagement.FLAG_SERIAL_CALIBRATION_UPLOADED;
+    Connection conn = null;
+
+    try {
+
+      conn = DriverManager.getConnection(DbConnection.MYSQL_URL, DbConnection.MYSQL_UNAME, DbConnection.MYSQL_PASSWORD);
+
+      PreparedStatement insertUpload = conn.prepareStatement(insertSerialUploadQuery);
+
+      insertUpload.setLong(1, id);
+      insertUpload.executeUpdate();
+
+    } catch (SQLException | NumberFormatException e) {
+      System.out.println(e);
+    } finally {
+      try {
+        conn.close();
+
+      } catch (SQLException ex) {
+        Logger.getLogger(SerialUploader.class
+                .getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+  }
 
 }
