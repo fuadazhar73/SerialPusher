@@ -16,7 +16,7 @@ public class Strings {
   public static final String SITE_ID = "JATINEGARA";
   
   public static final String POST_CLOUD = "http://128.199.213.155/dfm/serial.php";
-  public static final String POST_CALIB_CLOUD = "http://128.199.213.155/dfm/serial.php";
+  public static final String POST_CALIB_CLOUD = "http://128.199.213.155/dfm/serial_calibration.php";
   public static final String POST_LOCAL = "http://localhost/dfmStandart/serial.php";
   public static final String POST_CALIB_LOCAL = "http://localhost/dfmStandart/serial_calibration.php";
   

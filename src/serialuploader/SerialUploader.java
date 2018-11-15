@@ -120,35 +120,36 @@ public class SerialUploader implements Runnable {
           }
         }
 
-        if (data.indexOf("VHS") > 0) {
-          String sData = data.substring(data.indexOf("VHS") + 4, data.length()).trim();
-          try {
-            serialData.setOtherOne("VHS " + sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("DIPO LOK") > 0) {
-          String sData = data.substring(data.indexOf("DIPO LOK") + 9, data.length()).trim();
-          try {
-            serialData.setOtherTwo("DIPO LOK " + sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("FLOWMETER") > 0) {
-          String sData = data.substring(data.indexOf("FLOWMETER") + 10, data.length()).trim();
-          try {
-            serialData.setOtherThree("FM" + sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
+//        if (data.indexOf("VHS") > 0) {
+//          String sData = data.substring(data.indexOf("VHS") + 3, data.length()).trim();
+//          
+//          try {
+//            //serialData.setOtherOne("VHS " + sData);
+//            serialData.setDataState("NORMAL");
+//          } catch (NumberFormatException nfe) {
+//            serialData.setDataState("ABNORMAL");
+//          }
+//        }
+//
+//        if (data.indexOf("DIPO LOK") > 0) {
+//          String sData = data.substring(data.indexOf("DIPO LOK") + 9, data.length()).trim();
+//          try {
+//            //serialData.setOtherTwo("DIPO LOK " + sData);
+//            serialData.setDataState("NORMAL");
+//          } catch (NumberFormatException nfe) {
+//            serialData.setDataState("ABNORMAL");
+//          }
+//        }
+//
+//        if (data.indexOf("FLOWMETER") > 0) {
+//          String sData = data.substring(data.indexOf("FLOWMETER") + 10, data.length()).trim();
+//          try {
+//            //serialData.setOtherThree("FM" + sData);
+//            serialData.setDataState("NORMAL");
+//          } catch (NumberFormatException nfe) {
+//            serialData.setDataState("ABNORMAL");
+//          }
+//        }
 
         if (data.indexOf("START COUNT") > 0) {
           String start = data.substring(data.indexOf("START COUNT") + 11, data.length()).trim();
@@ -288,6 +289,7 @@ public class SerialUploader implements Runnable {
         if (data.indexOf("CALIBRATION NUMBER") > 0) {
           String sData = data.substring(data.indexOf("CALIBRATION NUMBER") + 18, data.length()).trim();
           try {
+            
             serialData.setCalNum(sData);
             serialData.setDataState("NORMAL");
           } catch (NumberFormatException nfe) {

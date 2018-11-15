@@ -94,7 +94,7 @@ public class UploadManagement {
     String line = "";
     StringBuilder sb = new StringBuilder();
     CloseableHttpClient client = HttpClients.createDefault();
-    HttpPost post = new HttpPost(Strings.POST_LOCAL);
+    HttpPost post = new HttpPost(Strings.POST_CLOUD);
 
     try {
       List<NameValuePair> nameValuePairs = new ArrayList<>(1);
@@ -304,7 +304,7 @@ public class UploadManagement {
     String linex = "";
     StringBuilder sbx = new StringBuilder();
     CloseableHttpClient clientx = HttpClients.createDefault();
-    HttpPost postx = new HttpPost(Strings.POST_CALIB_LOCAL);
+    HttpPost postx = new HttpPost(Strings.POST_CALIB_CLOUD);
 
     try {
       List<NameValuePair> nameValuePairs = new ArrayList<>(1);
