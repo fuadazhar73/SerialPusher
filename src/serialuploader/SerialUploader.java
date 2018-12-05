@@ -72,8 +72,6 @@ public class SerialUploader implements Runnable {
       conn = DriverManager.getConnection(DbConnection.MYSQL_URL, DbConnection.MYSQL_UNAME, DbConnection.MYSQL_PASSWORD);
       qm.getPendingQueue();
       um.checkPendingUpload();
-      qm.getPendingCalibQueue();
-      um.checkPendingCalib();
 
       Calendar calendar = Calendar.getInstance();
       java.sql.Date now = new java.sql.Date(calendar.getTime().getTime());
@@ -265,92 +263,6 @@ public class SerialUploader implements Runnable {
         if (serialData.getDataState() == null || serialData.getDataState() == "") {
           serialData.setDataState("ABNORMAL");
         }
-
-        if (data.indexOf("SHIFT START") > 0) {
-          String sData = data.substring(data.indexOf("SHIFT START") + 11, data.length()).trim();
-          try {
-            serialData.setShiftStart(sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("SHIFT FINISH") > 0) {
-          String sData = data.substring(data.indexOf("SHIFT FINISH") + 12, data.length()).trim();
-          try {
-            serialData.setShiftFinish(sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("CALIBRATION NUMBER") > 0) {
-          String sData = data.substring(data.indexOf("CALIBRATION NUMBER") + 18, data.length()).trim();
-          try {
-            
-            serialData.setCalNum(sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("SHIFT NET") > 0) {
-          
-          String sData = data.substring(data.indexOf("SHIFT NET") + 9, data.length()).trim();
-          String[] s = sData.split("\\s+");
-          if (2 == s.length) {           
-            serialData.setShiftNet(s[0].trim());
-            serialData.setDataState("NORMAL");
-          } else {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("SHIFT GROSS") > 0) {
-          String sData = data.substring(data.indexOf("SHIFT GROSS") + 11, data.length()).trim();
-          String[] s = sData.split("\\s+");
-          if (2 == s.length) {           
-            serialData.setShiftGross(s[0].trim());
-            serialData.setDataState("NORMAL");
-          } else {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("END NET TOTAL") > 0) {
-          String sData = data.substring(data.indexOf("END NET TOTAL") + 13, data.length()).trim();
-          String[] s = sData.split("\\s+");
-          if (2 == s.length) {           
-            serialData.setEndNetTotal(s[0].trim());
-            serialData.setDataState("NORMAL");
-          } else {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("END TOTALIZER") > 0) {
-          String sData = data.substring(data.indexOf("END TOTALIZER") + 13, data.length()).trim();
-          String[] s = sData.split("\\s+");
-          if (2 == s.length) {           
-            serialData.setEndTotalizer(s[0].trim());
-            serialData.setDataState("NORMAL");
-          } else {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
-
-        if (data.indexOf("DELIVERIES") > 0) {
-          String sData = data.substring(data.indexOf("DELIVERIES") + 10, data.length()).trim();
-          try {
-            serialData.setDeliveries(sData);
-            serialData.setDataState("NORMAL");
-          } catch (NumberFormatException nfe) {
-            serialData.setDataState("ABNORMAL");
-          }
-        }
         ids.append(rs.getInt("ID"));
           ids.append(",");
         message.append(data);
@@ -376,11 +288,9 @@ public class SerialUploader implements Runnable {
           if (serialDatas.get(i).getDataState().equalsIgnoreCase("NORMAL")) {
             if (serialDatas.get(i).getUnitId() != null && !serialDatas.get(i).getUnitId().equalsIgnoreCase("")) {
               qm.queuedData(serialData);
-              qm.calibQueuedData(serialData);
             } else {
               serialDatas.get(i).setDataState("ABNORMAL");
               qm.queuedData(serialData);
-              qm.calibQueuedData(serialData);
             }
           } else {
             if (serialDatas.get(i).getUnitId() == null) {
@@ -388,14 +298,11 @@ public class SerialUploader implements Runnable {
               if (!serialDatas.get(i).getUnitId().equalsIgnoreCase("")) {
                 if (serialDatas.get(i).getDuplicate() == null) {
                   qm.queuedData(serialDatas.get(i));
-                  qm.calibQueuedData(serialData);
                 } else {
                   if (serialDatas.get(i).getDuplicate().equalsIgnoreCase("DUPLICATE TICKET")) {
                     qm.queuedData(serialDatas.get(i));
-                    qm.calibQueuedData(serialData);
                   } else {
                     qm.queuedData(serialDatas.get(i));
-                    qm.calibQueuedData(serialData);
                   }
                 }
               }
@@ -410,7 +317,6 @@ public class SerialUploader implements Runnable {
             }
           }
           qm.queuedData(serialDatas.get(i));
-          qm.calibQueuedData(serialData);
         }
       }
 

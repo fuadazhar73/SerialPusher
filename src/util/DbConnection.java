@@ -11,10 +11,10 @@ package util;
  */
 public class DbConnection {
 
-//  public static final String MYSQL_UNAME = "ttys";
-//  public static final String MYSQL_PASSWORD = "pikachu";
+  public static final String MYSQL_UNAME = "ttys";
+  public static final String MYSQL_PASSWORD = "V1m@n@l0gy123!";
     public static final String MYSQL_URL = "jdbc:mysql://localhost:3306/ttys";
-    public static final String MYSQL_UNAME = "root";
-    public static final String MYSQL_PASSWORD = "rootadmin";
+//    public static final String MYSQL_UNAME = "root";
+//    public static final String MYSQL_PASSWORD = "rootadmin";
 
 }
