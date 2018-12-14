@@ -16,7 +16,7 @@ public class Strings {
   public static final String SITE_ID = "JATINEGARA";
   
   public static final String POST_CLOUD = "http://128.199.213.155/dfm/serial.php";
-  public static final String POST_LOCAL = "http://localhost/dfmStandart/serial.php";  
+  public static final String POST_LOCAL = "http://192.168.88.26/serial.php";  
   
   public static final String FLAG_QUEUED = "\nQueued..";
   
